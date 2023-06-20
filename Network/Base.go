@@ -10,19 +10,19 @@ import (
 // ------//	The network is structured in a Doubly Linked List fashion,
 // ------//	where the nodes are Dense Layers and Activation Layers.
 type Network struct {
-	Head             *Dense       //	first layer of the network
-	Tail             *Activation  //	last layer of the network
-	DenseLayers      []Dense      //
-	ActivationLayers []Activation //
+	Head             *Dense      //	first layer of the network
+	Tail             *Activation //	last layer of the network
+	DenseLayers      []Dense
+	ActivationLayers []Activation
 }
 
-// ------// This builds a new Dense Neural Network.
-// ------// `neurons` is a slice defining the number of
-// ------// neurons and layers. If neurons == [2, 3, 1],
-// ------// then it will have 3 layers,
-// ------// 2 neurons on the initial layer,
-// ------// 3 in the hidden layer, and
-// ------// 1 neuron in the output layer.
+// This builds a new Dense Neural Network.
+// `neurons` is a slice defining the number of
+// neurons and layers. If neurons == [2, 3, 1],
+// then it will have 3 layers,
+// 2 neurons on the initial layer,
+// 3 in the hidden layer, and
+// 1 neuron in the output layer.
 func NewNetwork(neurons []int) (Network, error) {
 	var err error
 
@@ -59,6 +59,7 @@ func NewNetwork(neurons []int) (Network, error) {
 	return Net, err
 }
 
+// trains the network
 func (N *Network) Train(inputs, outputs *([]matrix.Matrix), epochs uint) {
 	examples := len(*inputs)
 	var epoch uint
@@ -66,19 +67,18 @@ func (N *Network) Train(inputs, outputs *([]matrix.Matrix), epochs uint) {
 	for epoch = 0; epoch < epochs; epoch++ {
 		errorE := 0.0
 		for i := 0; i < examples; i++ {
-			//-------------------------------// "network.Head" is the first dense layer of the Network,
-			y_pred := N.Head.Forward(&(*inputs)[i]) // and "y_pred" receives the calculated output of the i-th
-			//-------------------------------// training example.
+			//--------------------------------------// "network.Head" is the first dense layer of the
+			y_pred := N.Head.Forward(&(*inputs)[i]) // Network, and "y_pred" receives the calculated
+			//--------------------------------------// output of the i-th training example.
 
 			errorE += Losses.MeanSquaredError(&(*outputs)[i], &y_pred)
 
-			//------------------------------------------------------------// "network.Tail" is the last activation layer
-			grad := Losses.MeanSquaredErrorPrime(&(*outputs)[i], &y_pred) // of the Network, and here we're doing the
-			grad = N.Tail.Backward(&grad)                                 // backpropagation, updating the network
-			//------------------------------------------------------------// weights and biases.
+			//------------------------------------------------------------//
+			grad := Losses.MeanSquaredErrorPrime(&(*outputs)[i], &y_pred) // Here we're doing the backpropagation,
+			grad = N.Tail.Backward(&grad)                                 // updating the network weights and biases.
+			//------------------------------------------------------------//
 		}
 		errorE = errorE / float64(examples)
 		fmt.Printf("%d/%d, error = %f\n", epoch+1, epochs, errorE) // prints the error on each epoch
 	}
-
 }
