@@ -2,31 +2,33 @@ package main
 
 import (
 	nn "ann/Network"
-	Losses "ann/losses"
 	"ann/matrix"
 	"fmt"
+	"time"
 )
 
 func main() {
 
-	//-----------------------//   each example X[i] we use
-	var X [4](matrix.Matrix) // to train our network is a Matrix,
-	var Y [4](matrix.Matrix) // as well as each target Y[i]
-	examples := len(X)
-	//-----------------------//
-	//
+	//------------------// time measurement
+	start := time.Now() //
+	//------------------//
 
-	//
-	//--------------------------------//
-	for i := 0; i < examples; i++ { ////
-		X[i] = matrix.NewMatrix(2, 1) // in this case, each X[i] is a column matrix (a vector)
-		Y[i] = matrix.NewMatrix(1, 1) // and each Y[i] is a number
-	} //------------------------------//
+	//----------------------//
+	var X [](matrix.Matrix) // each example X[i] we use to
+	var Y [](matrix.Matrix) // train our network is a Matrix,
+	examples := 4           // as well as each target Y[i]
+	//----------------------//
 
-	// ------ // We are considering the implication logical operation,
-	// ------ // but with the given architecure, it would work with
-	// ------ // any other binary logical operation, such as
-	// ------ // XOR, conjunction, disjunction, etc.
+	//----------------------------------------//
+	for i := 0; i < examples; i++ { //--------//
+		X = append(X, matrix.NewMatrix(2, 1)) // in this case, each X[i] is a column matrix (a vector)
+		Y = append(Y, matrix.NewMatrix(1, 1)) // and each Y[i] is a number
+	} //--------------------------------------//
+
+	//------// We are considering the implication logical operation,
+	//------// but with the given architecure (defined below),
+	//------// it would work with any other binary logical operation,
+	//------// such as XOR, conjunction, disjunction, etc.
 	//----------------------------------//
 	X[0].Values = [][]float64{{0}, {0}} //
 	Y[0].Values = [][]float64{{1}}      //
@@ -43,38 +45,18 @@ func main() {
 	// and the other receiving 3 numbers and spitting 1 as an output.
 	//------------------------------------------//
 	network, _ := nn.NewNetwork([]int{2, 3, 1}) //
-	epochs := 16180                             //
+	var epochs uint = 16180                     //
 	//------------------------------------------//
 	// for this particular example, this particular architecture and
 	// around 10k epochs of training seems to be enough to learn the pattern.
 	//
-	//
 
 	//
-	//
-	//-------------------------------------------------------//
-	//	Here, we are training the network `epochs` times,
-	//	and also calculating and printing the error.
-	//-------------------------------------------------------//
-	for epoch := 0; epoch < epochs; epoch++ {
-		errorE := 0.0
-		for i := 0; i < examples; i++ {
-			//-------------------------------// "network.Head" is the first dense layer of the Network,
-			y := network.Head.Forward(&X[i]) // and "y" receives the calculated output of the i-th
-			//-------------------------------// training example.
-
-			errorE += Losses.MeanSquaredError(&Y[i], &y)
-
-			//----------------------------------------------// "network.Tail" is the last activation layer
-			grad := Losses.MeanSquaredErrorPrime(&Y[i], &y) // of the Network, and here we're doing the
-			grad = network.Tail.Backward(&grad)             // backpropagation, updating the network
-			//----------------------------------------------// weights and biases.
-		}
-		errorE = errorE / float64(examples)
-		fmt.Printf("%d/%d, error = %f\n", epoch+1, epochs, errorE) // prints the error on each epoch
-	}
-	//-------------------------------------------------------------//
-	//-------------------------------------------------------------//
+	//------// Trains the neural network:
+	//----------------------------//
+	network.Train(&X, &Y, epochs) //
+	//----------------------------//
+	//------//
 	//
 
 	//
@@ -84,6 +66,9 @@ func main() {
 		output := network.Head.Forward(&(X[i]))
 		fmt.Println(output.Values, Y[i].Values)
 	}
+
 	fmt.Println()
+	duration := time.Since(start)
+	fmt.Println("time elapsed:", duration)
 
 }

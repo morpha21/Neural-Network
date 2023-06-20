@@ -1,4 +1,4 @@
-package Losses
+package losses
 
 import (
 	"ann/matrix"
