@@ -4,6 +4,7 @@ import (
 	nn "ann/Network"
 	"ann/utils"
 	"fmt"
+	"os"
 	"time"
 )
 
@@ -13,14 +14,17 @@ func main() {
 	start := time.Now() //
 	//------------------//
 
-	X := utils.ReadCSV("x.csv")
-	Y := utils.ReadCSV("y.csv")
+	x_file := os.Args[1]
+	y_file := os.Args[2]
+
+	X := utils.ReadCSV(x_file)
+	Y := utils.ReadCSV(y_file)
 	fmt.Println()
 
 	// We are now defining the Neural Network architecture, giving it 2 layers:
 	// one receiving 2 numbers and spitting out 3 to the next layer;
 	// and the other receiving 3 numbers and spitting 1 as an output.
-	//------------------------------------------//
+	//-------------------------?-----------------//
 	network, _ := nn.NewNetwork([]int{2, 3, 1}) //
 	var epochs uint = 8128                      //
 	//------------------------------------------//

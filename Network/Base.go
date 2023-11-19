@@ -64,8 +64,9 @@ func (N *Network) Train(inputs, outputs *([]matrix.Matrix), epochs uint) {
 	examples := len(*inputs)
 	var epoch uint
 
+	var errorE float64
 	for epoch = 0; epoch < epochs; epoch++ {
-		errorE := 0.0
+		errorE = 0.0
 		for i := 0; i < examples; i++ {
 			//--------------------------------------// "network.Head" is the first dense layer of the
 			y_pred := N.Head.Forward(&(*inputs)[i]) // Network, and "y_pred" receives the calculated
@@ -79,6 +80,8 @@ func (N *Network) Train(inputs, outputs *([]matrix.Matrix), epochs uint) {
 			//------------------------------------------------------------//
 		}
 		errorE = errorE / float64(examples)
-		fmt.Printf("%d/%d, error = %f\n", epoch+1, epochs, errorE) // prints the error on each epoch
+		// fmt.Printf("%d/%d, error = %f\n\n", epoch+1, epochs, errorE) // prints the error on each epoch
+
 	}
+	fmt.Printf("error = %f\n\n", errorE) // prints the error on each epoch
 }
