@@ -25,3 +25,17 @@ activation layers. They also have methods that connect them to those layers.
 Activation layers are structs with pointers to the previous and next (if exists) dense 
 layers. They have methods similar to those found in Dense layers. Currently, the ANN 
 is using only `tanh` as activation function.
+
+
+## Installation: 
+Well, there's not much to it. just do `git clone https://github.com/morpha21/Neural-Network` and you're good to go. 
+
+## Usage: 
+you can either compile it and then run: 
+`go build cmd/main.go`
+`./main x.csv y.csv`
+
+or just let Go compile it to a temporary file, run it, and get rid of the file:
+`go run cmd/main.go x.csv y.csv`
+
+
